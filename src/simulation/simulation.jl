@@ -124,8 +124,14 @@ function run_simulation(
         control_current = false, target_current = 0.0,
         Kp = 0.0, Ti = Inf, Td = 0.0, time_constant = 5e-4,
         dtmin = 0.0, dtmax = Inf,
-        verbose = true, anom_heat_flux_coefficient = 1.0, 
+        verbose = true,
     )
+
+
+    #check that Landmark uses the correct thermal conductivity
+    if config.LANDMARK & (config.conductivity_model != LANDMARK_conductivity())
+        error("LANDMARK configuration needs to use the LANDMARK thermal conductivity model.")
+    end
 
     # If duration and/or dt are provided with units, convert to seconds and then strip units
     duration = convert_to_float64(duration, u"s")
@@ -227,7 +233,7 @@ function run_simulation(
         Δz_cell, Δz_edge,
         control_current, target_current, Kp, Ti, Td,
         exit_plane_index = findfirst(>=(config.thruster.geometry.channel_length), z_cell) - 1,
-        dtmin, dtmax, anom_heat_flux_coefficient
+        dtmin, dtmax
     )
 
 
